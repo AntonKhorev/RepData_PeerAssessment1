@@ -102,3 +102,18 @@ Distribution of total steps per day in the imputed data has mean `r format(meanS
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+```{r}
+dataImputed$dayOfWeekType=factor(ifelse(
+	between(as.POSIXlt(dataImputed$date)$wday,1,5),
+	'weekday',
+	'weekend'
+))
+dataIntervalsDoWType = (dataImputed %>%
+	group_by(interval,dayOfWeekType) %>%
+	summarize(steps=mean(steps,na.rm=T))
+)
+library(ggplot2)
+library(scales)
+qplot(interval,steps,facets=dayOfWeekType~.,geom='line',data=dataIntervalsDoWType)+scale_x_datetime(labels=date_format('%H:%M'))
+```
