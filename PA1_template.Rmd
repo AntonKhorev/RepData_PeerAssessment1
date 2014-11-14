@@ -5,6 +5,9 @@ output:
     keep_md: true
 ---
 
+```{r message=FALSE}
+library(dplyr)
+```
 
 ## Loading and preprocessing the data
 
@@ -15,14 +18,12 @@ if (!file.exists(dataFilename)) {
 	unzip(zipFilename,dataFilename)
 }
 data=read.csv(dataFilename,colClasses=c('integer','Date','integer'))
+data$interval=as.POSIXct(paste('2000-01-01',paste(data$interval%/%100, data$interval%%100, 0, sep=':')))
 ```
 
 
 ## What is mean total number of steps taken per day?
 
-```{r message=FALSE}
-library(dplyr)
-```
 ```{r}
 stepsPerDay = (
 	data %>% 
@@ -38,10 +39,15 @@ Distribution of total steps per day has mean `r format(mean(stepsPerDay,na.rm=T)
 ## What is the average daily activity pattern?
 
 ```{r}
-intervalData = data %>%
+dataIntervals = (data %>%
 	group_by(interval) %>%
 	summarize(steps=mean(steps,na.rm=T))
-plot(intervalData,type='l',main='Average number of steps per interval')
+)
+plot(
+	dataIntervals,
+	type='l',
+	main='Average number of steps per interval'
+)
 ```
 
 
