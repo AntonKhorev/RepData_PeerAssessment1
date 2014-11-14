@@ -31,9 +31,11 @@ stepsPerDay = (
 	summarize(steps=sum(steps))
 )$steps
 hist(stepsPerDay)
+meanStepsPerDay=mean(stepsPerDay,na.rm=T)
+medianStepsPerDay=median(stepsPerDay,na.rm=T)
 ```
 
-Distribution of total steps per day has mean `r format(mean(stepsPerDay,na.rm=T))` and median `r format(median(stepsPerDay,na.rm=T))`.
+Distribution of total steps per day has mean `r format(meanStepsPerDay)` and median `r format(medianStepsPerDay)`.
 
 
 ## What is the average daily activity pattern?
@@ -51,7 +53,7 @@ plot(
 maxStepsInterval=dataIntervals[which.max(dataIntervals$steps),]$interval
 ```
 
-Maximum number of steps is in the 5-minute interval starting at `r strftime(maxStepsInterval,format="%H:%M")`.
+Maximum number of steps is between `r strftime(maxStepsInterval,format="%H:%M")` and `r strftime(maxStepsInterval+5*60,format="%H:%M")`.
 
 
 ## Imputing missing values
