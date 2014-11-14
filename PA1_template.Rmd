@@ -18,7 +18,17 @@ if (!file.exists(dataFilename)) {
 	unzip(zipFilename,dataFilename)
 }
 data=read.csv(dataFilename,colClasses=c('integer','Date','integer'))
-data$interval=as.POSIXct(paste('2000-01-01',paste(data$interval%/%100, data$interval%%100, 0, sep=':')))
+data$interval=as.POSIXct(
+	paste(
+		'2000-01-01',
+		paste(
+			data$interval%/%100,
+			data$interval%%100,
+			0,
+			sep=':'
+		)
+	)
+)
 ```
 
 
@@ -30,7 +40,11 @@ stepsPerDay = (
 	group_by(date) %>% 
 	summarize(steps=sum(steps))
 )$steps
-hist(stepsPerDay)
+hist(
+	stepsPerDay,
+	main='Histogram of total number of steps per day',
+	xlab='steps per day'
+)
 meanStepsPerDay=mean(stepsPerDay,na.rm=T)
 medianStepsPerDay=median(stepsPerDay,na.rm=T)
 ```
@@ -58,6 +72,33 @@ Maximum number of steps is between `r strftime(maxStepsInterval,format="%H:%M")`
 
 ## Imputing missing values
 
+```{r}
+nMissingValues=sum(is.na(data$steps))
+```
+
+Total number of missing values is `r nMissingValues`. They are replaced by mean values for 5-minute intervals.
+
+```{r}
+dataImputed=data
+dataImputed$steps=ifelse(is.na(data$steps),dataIntervals$steps,data$steps)
+```
+
+```{r}
+stepsPerDayImputed = (
+	dataImputed %>% 
+	group_by(date) %>% 
+	summarize(steps=sum(steps))
+)$steps
+hist(
+	stepsPerDayImputed,
+	main='Histogram of total number of steps per day computed from imputed data',
+	xlab='steps per day'
+)
+meanStepsPerDayImputed=mean(stepsPerDayImputed)
+medianStepsPerDayImputed=median(stepsPerDayImputed)
+```
+
+Distribution of total steps per day in the imputed data has mean `r format(meanStepsPerDay)` and median `r format(medianStepsPerDay)` -- the same as in the original data. This is not surprising because missing days are replaced by average days.
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
