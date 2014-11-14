@@ -58,10 +58,9 @@ Distribution of total steps per day has mean `r format(meanStepsPerDay)` and med
 ## What is the average daily activity pattern?
 
 ```{r}
-dataIntervals = (data %>%
+dataIntervals = data %>%
 	group_by(interval) %>%
 	summarize(steps=mean(steps,na.rm=T))
-)
 qplot(
 	interval,steps,
 	data=dataIntervals,
@@ -103,7 +102,7 @@ meanStepsPerDayImputed=mean(stepsPerDayImputed)
 medianStepsPerDayImputed=median(stepsPerDayImputed)
 ```
 
-Distribution of total steps per day in the imputed data has mean `r format(meanStepsPerDay)` and median `r format(medianStepsPerDay)` -- the same as in the original data. This is not surprising because missing days are replaced by average days.
+Distribution of total steps per day in the imputed data has mean `r format(meanStepsPerDay)` and median `r format(medianStepsPerDay)` -- the same as in the original data. This is not surprising because missing days are replaced by average days, which increases the distribution weight at the mean.
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
@@ -111,13 +110,11 @@ Distribution of total steps per day in the imputed data has mean `r format(meanS
 ```{r}
 dataImputed$dayOfWeekType=factor(ifelse(
 	between(as.POSIXlt(dataImputed$date)$wday,1,5),
-	'weekday',
-	'weekend'
+	'weekday','weekend'
 ))
-dataIntervalsDoWType = (dataImputed %>%
+dataIntervalsDoWType = dataImputed %>%
 	group_by(interval,dayOfWeekType) %>%
 	summarize(steps=mean(steps,na.rm=T))
-)
 qplot(
 	interval,steps,
 	facets=dayOfWeekType~.,
