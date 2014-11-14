@@ -7,11 +7,28 @@ output:
 
 
 ## Loading and preprocessing the data
-
+```{r}
+zipFilename='activity.zip'
+dataFilename='activity.csv'
+if (!file.exists(dataFilename)) {
+	unzip(zipFilename,dataFilename)
+}
+data=read.csv(dataFilename,colClasses=c('integer','Date','integer'))
+```
 
 
 ## What is mean total number of steps taken per day?
-
+```{r message=FALSE}
+library(dplyr)
+```
+```{r}
+stepsPerDay = (
+	data %>% 
+	group_by(date) %>% 
+	summarize(stepsPerDay=sum(steps))
+)$stepsPerDay
+hist(stepsPerDay)
+```
 
 
 ## What is the average daily activity pattern?
