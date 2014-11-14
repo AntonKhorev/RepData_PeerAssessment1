@@ -7,6 +7,8 @@ output:
 
 ```{r message=FALSE}
 library(dplyr)
+library(ggplot2)
+library(scales)
 ```
 
 ## Loading and preprocessing the data
@@ -40,8 +42,9 @@ stepsPerDay = (
 	group_by(date) %>% 
 	summarize(steps=sum(steps))
 )$steps
-hist(
+qplot(
 	stepsPerDay,
+	binwidth=2500,
 	main='Histogram of total number of steps per day',
 	xlab='steps per day'
 )
@@ -59,11 +62,12 @@ dataIntervals = (data %>%
 	group_by(interval) %>%
 	summarize(steps=mean(steps,na.rm=T))
 )
-plot(
-	dataIntervals,
-	type='l',
+qplot(
+	interval,steps,
+	data=dataIntervals,
+	geom='line',
 	main='Average number of steps per interval'
-)
+)+scale_x_datetime(labels=date_format('%H:%M'))
 maxStepsInterval=dataIntervals[which.max(dataIntervals$steps),]$interval
 ```
 
@@ -89,8 +93,9 @@ stepsPerDayImputed = (
 	group_by(date) %>% 
 	summarize(steps=sum(steps))
 )$steps
-hist(
+qplot(
 	stepsPerDayImputed,
+	binwidth=2500,
 	main='Histogram of total number of steps per day computed from imputed data',
 	xlab='steps per day'
 )
@@ -113,7 +118,11 @@ dataIntervalsDoWType = (dataImputed %>%
 	group_by(interval,dayOfWeekType) %>%
 	summarize(steps=mean(steps,na.rm=T))
 )
-library(ggplot2)
-library(scales)
-qplot(interval,steps,facets=dayOfWeekType~.,geom='line',data=dataIntervalsDoWType)+scale_x_datetime(labels=date_format('%H:%M'))
+qplot(
+	interval,steps,
+	facets=dayOfWeekType~.,
+	data=dataIntervalsDoWType,
+	geom='line',
+	main='Average number of steps per interval'
+)+scale_x_datetime(labels=date_format('%H:%M'))
 ```
