@@ -48,7 +48,10 @@ plot(
 	type='l',
 	main='Average number of steps per interval'
 )
+maxStepsInterval=dataIntervals[which.max(dataIntervals$steps),]$interval
 ```
+
+Maximum number of steps is in the 5-minute interval starting at `r strftime(maxStepsInterval,format="%H:%M")`.
 
 
 ## Imputing missing values
